@@ -35,8 +35,8 @@
 
 ### What It Does
 
-- **Tracks 30+ competitors** with 30+ data points each (pricing, customers, employee count, funding, etc.)
-- **Aggregates data from 15+ sources** including SEC filings, job boards, app stores, and industry databases
+- **Tracks competitors** with data points each (pricing, customers, employee count, funding, etc.)
+- **Aggregates data from sources** including SEC filings, job boards, app stores, and industry databases
 - **Generates AI-powered insights** using GPT-4 for executive summaries and strategic analysis
 - **Delivers reports** in multiple formats: Excel dashboards, PDF battlecards, and JSON for Power BI
 - **Monitors changes** with real-time alerts when competitors update their messaging, pricing, or strategy
@@ -87,7 +87,7 @@
 ### 1. Real-Time Intelligence & Monitoring
 
 **Automated Competitor Tracking**
-- Monitors 30+ data points per competitor
+- Monitors data points per competitor
 - Configurable refresh schedules (daily, weekly, on-demand)
 - Change detection with configurable alert thresholds
 - Historical trend tracking
