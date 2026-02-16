@@ -1,0 +1,47 @@
+name: Auto-Create PR
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if a PR already exists for this branch
+          EXISTING_PR=$(gh pr list --head "${{ github.ref_name }}" --json number --jq '.[0].number' 2>/dev/null || echo "")
+
+          if [ -z "$EXISTING_PR" ]; then
+            # Extract commit messages for PR body
+            COMMITS=$(git log origin/master..HEAD --pretty=format:"- %s" 2>/dev/null || echo "- Initial commit")
+
+            gh pr create \
+              --title "${{ github.ref_name }}" \
+              --body "$(cat <<EOF
+          ## Auto-generated PR
+
+          ### Commits
+          ${COMMITS}
+
+          ---
+          *Auto-created by CI on push to \`${{ github.ref_name }}\`*
+          EOF
+          )" \
+              --label "auto-pr" \
+              --base master \
+              --head "${{ github.ref_name }}" || echo "PR creation skipped (may already exist)"
+          else
+            echo "PR #${EXISTING_PR} already exists for branch ${{ github.ref_name }}"
+          fi

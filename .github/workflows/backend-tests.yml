@@ -1,0 +1,67 @@
+name: Backend Tests
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-tests.yml'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'backend/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      SECRET_KEY: ci-test-secret-key-not-real
+      ADMIN_EMAIL: ci@test.com
+      ADMIN_PASSWORD: ci-test-password
+      AI_PROVIDER: hybrid
+      AI_FALLBACK_ENABLED: "false"
+      LANGFUSE_ENABLED: "false"
+      VERTEX_AI_ENABLED: "false"
+      OLLAMA_ENABLED: "false"
+      LITELLM_ENABLED: "false"
+      OPIK_ENABLED: "false"
+      USE_LOCAL_EMBEDDINGS: "false"
+      REDIS_ENABLED: "false"
+      METRICS_ENABLED: "false"
+      RATE_LIMIT_ENABLED: "false"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements-ci.txt
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ci.txt
+
+      - name: Run tests
+        working-directory: backend
+        run: |
+          python -m pytest -x --tb=short \
+            --ignore=tests/test_all_endpoints.py \
+            --ignore=tests/test_e2e.py \
+            --ignore=tests/e2e/ \
+            --ignore=tests/test_e2e_workflows.py \
+            -q
+
+      - name: Lint with flake8
+        working-directory: backend
+        run: |
+          flake8 --max-line-length=120 --count --statistics \
+            --exclude=venv,__pycache__,build,dist,.eggs \
+            ai_router.py constants.py dependencies.py cache.py metrics.py mfa.py \
+            agents/ routers/ middleware/ schemas/ services/ utils/

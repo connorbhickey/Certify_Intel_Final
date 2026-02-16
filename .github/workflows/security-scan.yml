@@ -1,0 +1,48 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'backend/**'
+
+jobs:
+  bandit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: Run Bandit SAST scan
+        working-directory: backend
+        run: |
+          bandit -r . \
+            --exclude ./venv,./tests,./build,./dist,./__pycache__ \
+            -s B101,B601 \
+            -f json -o ../bandit-report.json || true
+          bandit -r . \
+            --exclude ./venv,./tests,./build,./dist,./__pycache__ \
+            -s B101,B601 \
+            --severity-level medium \
+            -f txt
+
+      - name: Upload Bandit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json
+          retention-days: 30

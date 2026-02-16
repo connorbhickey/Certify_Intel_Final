@@ -1,0 +1,78 @@
+# CI-only requirements: excludes heavy ML packages (torch, transformers, playwright)
+# that aren't needed for unit tests (all AI providers are mocked in tests)
+
+# Core
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.10.0
+sqlalchemy>=2.0.36
+aiosqlite>=0.20.0
+
+# PostgreSQL drivers (needed for import resolution)
+asyncpg>=0.30.0
+pgvector>=0.3.5
+psycopg[binary]>=3.2.0
+
+# LangGraph
+langgraph>=0.3.5
+langgraph-checkpoint>=2.0.0
+
+# Langfuse
+langfuse>=2.57.0
+
+# AI Providers (mocked in tests, but needed for imports)
+anthropic>=0.39.0
+openai>=1.58.0
+tiktoken>=0.8.0
+langchain>=0.3.0
+google-genai>=1.0.0
+
+# Scrapers (lightweight only)
+beautifulsoup4>=4.12.3
+requests>=2.32.0
+lxml>=5.3.0
+html5lib>=1.1
+feedparser>=6.0.0
+duckduckgo-search>=6.4.0
+
+# Utilities
+python-dotenv>=1.0.1
+python-multipart>=0.0.18
+APScheduler>=3.10.4
+tenacity>=9.0.0
+httpx>=0.28.0
+Pillow>=11.0.0
+PyPDF2>=3.0.0
+jinja2>=3.1.5
+
+# Reporting
+reportlab>=4.2.0
+openpyxl>=3.1.5
+
+# Auth
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+
+# Database Migrations
+alembic>=1.14.0
+
+# Cache
+redis>=5.2.0
+
+# Testing
+pytest>=8.3.0
+pytest-asyncio>=0.24.0
+pytest-cov>=6.0.0
+pytest-timeout>=2.2.0
+
+# Data
+pandas>=2.2.0
+yfinance>=0.2.50
+
+# Security
+itsdangerous>=2.2.0
+slowapi>=0.1.9
+
+# Linting
+flake8>=7.0.0
+bandit>=1.7.0

@@ -1,24 +1,60 @@
 # Contributing to Certify Intel
 
-## For AI Agents (Claude, GPT, Copilot, Cursor, etc.)
+## Quick Start
 
-**READ `CLAUDE.md` FIRST** - It contains mandatory instructions for all AI agents.
+```bash
+# Clone and set up
+git clone <repo-url>
+cd Certify_Intel_Final/backend
+python -m venv venv
+source venv/bin/activate  # or .\venv\Scripts\Activate.ps1 on Windows
+pip install -r requirements.txt
+cp .env.example .env      # Edit with your keys
+python main.py             # http://localhost:8000
+```
 
 ---
 
-## ⚡ SYNC PROTOCOL - REQUIRED AFTER EVERY TASK
+## CI/CD Pipeline
 
-**MANDATORY: After completing ANY task (no matter how minor), sync local ↔ GitHub:**
+All workflows run automatically via GitHub Actions.
 
+### On Push to Master
+| Workflow | What It Does |
+|----------|-------------|
+| **Backend Tests** | pytest (616 tests), flake8 linting |
+| **Frontend Tests** | Jest (55 tests) |
+| **Security Scan** | Bandit SAST analysis |
+
+### Feature Branch Workflow
 ```bash
-cd /path/to/Project_Intel_v6.1.1
-git status
-git add -A
-git commit -m "[Category] Brief description"
-git push origin master
+git checkout -b feature/my-feature
+# ... make changes ...
+git add -A && git commit -m "[Feature] Description"
+git push origin feature/my-feature
+# -> CI runs tests
+# -> PR auto-created to master (labeled 'auto-pr')
+# -> Auto-merges when all checks pass (squash merge)
 ```
 
-**Every single change must be committed and pushed immediately.**
+### Direct to Master (Quick Fixes)
+```bash
+git checkout master
+git add -A && git commit -m "[Fix] Description"
+git push origin master
+# -> CI runs tests automatically
+```
+
+### Releases
+```bash
+git tag v9.1.0
+git push origin v9.1.0
+# -> CI runs tests + creates GitHub Release with auto-generated notes
+```
+
+---
+
+## Commit Categories
 
 | Category | Use For |
 |----------|---------|
@@ -31,140 +67,59 @@ git push origin master
 
 ---
 
-## 🔒 CI/CD PIPELINE - AUTO-PR & AUTO-MERGE
-
-### Local Testing (Before Push)
-
-**MANDATORY**: Run tests locally before pushing:
-
-```powershell
-.\scripts\pre-push-tests.ps1
-```
-
-Or install git hooks for automatic testing:
-```powershell
-.\scripts\setup-git-hooks.ps1
-```
-
-### Automated Pipeline
-
-1. **On Push to ANY Branch**:
-   - Tests run automatically (pytest)
-   - Code quality checks (flake8, black, isort)
-
-2. **Feature Branches**:
-   - When tests pass → PR is auto-created to master
-   - PR is labeled `auto-pr`
-
-3. **Auto-Merge**:
-   - PRs with `auto-pr` label merge automatically when all checks pass
-   - Uses squash merge for clean history
-
-### Workflow
-
-```bash
-# Feature branch workflow
-git checkout -b feature/my-feature
-# ... make changes ...
-.\scripts\pre-push-tests.ps1
-git add -A && git commit -m "[Feature] Description"
-git push origin feature/my-feature
-# CI/CD creates PR and auto-merges when checks pass
-
-# Direct to master (quick fixes)
-git checkout master
-# ... make changes ...
-.\scripts\pre-push-tests.ps1
-git add -A && git commit -m "[Fix] Description"
-git push origin master
-```
-
----
-
-## Quick Reference
-
-### File Save Locations
-- **Documentation**: Save to `docs/` folder (NOT hidden folders)
-- **Code**: Save to respective folders (`backend/`, `frontend/`, `desktop-app/`)
-- **Desktop builds**: Output to `desktop-app/dist/`
-
-### Desktop App Build Protocol
-
-**MANDATORY**: Before building ANY new desktop app version:
-
-1. Run cleanup script first:
-```powershell
-powershell -ExecutionPolicy Bypass -File "docs/CLEANUP_OLD_INSTALL.ps1"
-```
-
-2. Build new version:
-```powershell
-cd desktop-app
-npm run build:win
-```
-
-3. Installer will be at: `desktop-app/dist/Certify_Intel_vX.X.X_Setup.exe`
-
-4. **SYNC TO GITHUB** (don't forget!)
-
-### Why Cleanup First?
-- Kills orphaned backend processes (port 8000)
-- Uninstalls old version silently
-- Deletes leftover files that cause conflicts
-- Ensures clean installation
-
----
-
 ## Project Structure
 
 ```
-Project_Intel_v6.1.1/
-├── backend/           # FastAPI Python backend
-├── frontend/          # Web UI (HTML/JS/CSS)
-├── desktop-app/       # Electron wrapper
-│   ├── dist/          # Built installers go here
-│   └── backend-bundle/# PyInstaller executable
-├── docs/              # Documentation and scripts
-├── .github/           # GitHub config (this file)
-└── CLAUDE.md          # AI agent instructions (READ THIS)
+Certify_Intel_Final/
+├── backend/               # FastAPI Python backend (150+ endpoints)
+│   ├── agents/            # 7 LangGraph AI agents
+│   ├── routers/           # 17 extracted API routers
+│   ├── schemas/           # Pydantic models
+│   ├── middleware/         # Security headers, metrics
+│   ├── services/          # Task service
+│   ├── data_providers/    # 10 enterprise data adapters
+│   ├── tests/             # 616 tests
+│   └── main.py            # App entry point
+├── frontend/              # Vanilla JS SPA (11 pages)
+│   ├── core/              # ES6 modules (api, utils, navigation)
+│   ├── components/        # Shared components (chat, modals, toast)
+│   ├── __tests__/         # 55 Jest tests
+│   └── app_v2.js          # Main application
+├── desktop-app/           # Electron wrapper for Windows builds
+├── client_docs/           # Developer documentation (8 guides)
+├── docs/                  # Technical reference docs
+├── nginx/                 # Reverse proxy config
+├── monitoring/            # Prometheus config
+├── scripts/               # DB migration, backup, CI helpers
+├── docker-compose*.yml    # Docker service configs
+├── CLAUDE.md              # Comprehensive technical reference
+└── GETTING_STARTED.md     # 5-minute setup guide
 ```
-
----
-
-## Key Files for AI Agents
-
-| File | Purpose |
-|------|---------|
-| `CLAUDE.md` | **READ FIRST** - Mandatory instructions, current state, remaining work |
-| `PLAN_COMPETITOR_INTEL_OPTIMIZED.md` | Master rebuild plan with all tasks |
-| `docs/V7_AGENT_SYSTEM.md` | Agent architecture, API endpoints |
-| `docs/CLEANUP_OLD_INSTALL.ps1` | Run before desktop builds |
-
----
-
-## For Human Developers
-
-1. Read `CLAUDE.md` for project context and current state
-2. Check `PLAN_COMPETITOR_INTEL_OPTIMIZED.md` for master plan
-3. Follow the desktop app build protocol above
-4. **Always commit and push after every change**
-5. Test locally before pushing
 
 ---
 
 ## Code Style
 
-- **Python**: Type hints, async/await, Pydantic models
-- **JavaScript**: ES6+, no frameworks (vanilla JS)
+- **Python**: Type hints, async/await, SQLAlchemy 2.0 `select()`, Pydantic models
+- **JavaScript**: ES6+, vanilla JS (no frameworks), `escapeHtml()` for all dynamic content
 - **CSS**: CSS variables, flexbox/grid, dark theme
+
+## Key Rules
+
+- All AI system prompts must include `NO_HALLUCINATION_INSTRUCTION` from `constants.py`
+- New endpoints go in `routers/*.py`, not `main.py`
+- Import shared deps from `dependencies.py` (never from `main.py`)
+- Use `get_ai_router()` singleton, never `AIRouter()` per request
+- Use `escapeHtml()` for any innerHTML with dynamic content (XSS prevention)
 
 ---
 
-## GitHub Repository
+## Documentation
 
-- **Repo**: `https://github.com/[YOUR-GITHUB-ORG]/Project_Intel_v6.1.1`
-- **Branch**: `master`
-- **Local Path**: `[USER_HOME]\Documents\Project_Intel_v6.1.1\`
-
-**Local and GitHub MUST be 100% identical at all times.**
-
+| Document | Location |
+|----------|----------|
+| Technical reference | `CLAUDE.md` (project root) |
+| Quick setup | `GETTING_STARTED.md` |
+| Developer guides | `client_docs/` (8 files) |
+| API reference | `docs/API_REFERENCE.md` |
+| Architecture | `docs/ARCHITECTURE.md` |
