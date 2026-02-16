@@ -3,7 +3,7 @@
  * Enables offline functionality and push notifications.
  */
 
-const CACHE_VERSION = 'v8.3.1';
+const CACHE_VERSION = 'v9.0.0';
 const CACHE_NAME = `certify-intel-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `certify-intel-runtime-${CACHE_VERSION}`;
 

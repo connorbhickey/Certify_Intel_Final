@@ -1,6 +1,6 @@
 {
     "name": "certify-intel",
-    "version": "8.3.1",
+    "version": "9.0.0",
     "description": "Certify Intel - Competitive Intelligence Platform for Healthcare Technology",
     "main": "electron/main.js",
     "author": "Certify Health",
