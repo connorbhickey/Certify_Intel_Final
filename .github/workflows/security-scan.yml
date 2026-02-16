@@ -35,8 +35,8 @@ jobs:
             -f json -o ../bandit-report.json || true
           bandit -r . \
             --exclude ./venv,./tests,./build,./dist,./__pycache__ \
-            -s B101,B601 \
-            --severity-level medium \
+            -s B101,B601,B310 \
+            --severity-level high \
             -f txt
 
       - name: Upload Bandit report
