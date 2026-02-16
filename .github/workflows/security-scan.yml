@@ -5,10 +5,12 @@ on:
     branches: [master]
     paths:
       - 'backend/**'
+      - '.github/workflows/security-scan.yml'
   pull_request:
     branches: [master]
     paths:
       - 'backend/**'
+  workflow_dispatch:
 
 jobs:
   bandit:
