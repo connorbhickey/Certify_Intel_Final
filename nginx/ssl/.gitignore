@@ -1,0 +1,11 @@
+# Ignore SSL certificate files (sensitive - never commit)
+*.pem
+*.crt
+*.key
+*.csr
+*.p12
+*.pfx
+
+# But track the setup script and this gitignore
+!setup-ssl.sh
+!.gitignore

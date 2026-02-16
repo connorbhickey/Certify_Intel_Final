@@ -1,0 +1,578 @@
+/**
+ * Certify Intel - Mobile Responsive Styles
+ * Responsive design for all device sizes
+ */
+
+/* ============== Responsive Breakpoints ============== */
+
+/* Tablet Portrait */
+@media screen and (max-width: 1024px) {
+    .sidebar {
+        width: 60px;
+        padding: 10px;
+    }
+    
+    .sidebar .logo-text,
+    .sidebar .nav-label,
+    .sidebar .user-info span {
+        display: none;
+    }
+    
+    .sidebar .nav-item {
+        justify-content: center;
+        padding: 12px;
+    }
+    
+    .main-content {
+        margin-left: 60px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Mobile Landscape */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: -250px;
+        width: 250px;
+        height: 100%;
+        z-index: 1000;
+        transition: left 0.3s ease;
+    }
+    
+    .sidebar.open {
+        left: 0;
+    }
+    
+    .sidebar .logo-text,
+    .sidebar .nav-label,
+    .sidebar .user-info span {
+        display: inline;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 15px;
+    }
+    
+    .mobile-menu-btn {
+        display: flex !important;
+    }
+    
+    .mobile-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+    
+    .mobile-overlay.open {
+        display: block;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .page-header .actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .stat-card {
+        padding: 15px;
+    }
+    
+    .stat-value {
+        font-size: 1.5em;
+    }
+    
+    .competitors-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .competitor-row {
+        display: block;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        padding: 15px;
+    }
+    
+    .competitor-row > div {
+        padding: 5px 0;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .competitor-row > div::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #64748b;
+    }
+    
+    .modal-content {
+        width: 95%;
+        max-width: none;
+        max-height: 90vh;
+        margin: 5vh auto;
+    }
+    
+    .battlecard-full {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Mobile Portrait */
+@media screen and (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .main-content {
+        padding: 10px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+        padding: 12px;
+    }
+    
+    .btn {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    
+    .page-header h1 {
+        font-size: 1.3em;
+    }
+    
+    .data-table {
+        font-size: 0.85em;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 8px 6px;
+    }
+    
+    .competitor-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .competitor-logo {
+        margin-bottom: 10px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    .modal-close {
+        top: 5px;
+        right: 5px;
+        font-size: 1.2em;
+    }
+    
+    .insight-section {
+        padding: 10px;
+    }
+    
+    .insight-section h3 {
+        font-size: 1em;
+    }
+    
+    .win-loss-stats {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ============== Touch-Friendly Enhancements ============== */
+
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .btn {
+        min-height: 44px;
+        padding: 10px 16px;
+    }
+    
+    .nav-item {
+        min-height: 48px;
+    }
+    
+    input, select, textarea {
+        min-height: 44px;
+    }
+    
+    .competitor-row {
+        padding: 15px;
+    }
+    
+    /* Remove hover effects */
+    .nav-item:hover,
+    .btn:hover,
+    .stat-card:hover {
+        transform: none;
+    }
+    
+    /* Add active states instead */
+    .nav-item:active,
+    .btn:active {
+        opacity: 0.8;
+    }
+}
+
+/* ============== PWA Install Banner ============== */
+
+.pwa-install-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #003087 0%, #0055cc 100%);
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1001;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.pwa-install-banner.show {
+    transform: translateY(0);
+}
+
+.pwa-install-banner .message {
+    flex: 1;
+}
+
+.pwa-install-banner .message strong {
+    display: block;
+    margin-bottom: 3px;
+}
+
+.pwa-install-banner .actions {
+    display: flex;
+    gap: 10px;
+}
+
+.pwa-install-banner .btn-install {
+    background: white;
+    color: #003087;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.pwa-install-banner .btn-dismiss {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.5);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* ============== Mobile Navigation ============== */
+
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001;
+    background: #003087;
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* ============== Bottom Navigation (Mobile) ============== */
+
+@media screen and (max-width: 768px) {
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid #e5e7eb;
+        justify-content: space-around;
+        padding: 8px 0;
+        z-index: 998;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .bottom-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 12px;
+        color: #64748b;
+        text-decoration: none;
+        font-size: 0.75em;
+        transition: color 0.2s;
+    }
+    
+    .bottom-nav-item.active {
+        color: #003087;
+    }
+    
+    .bottom-nav-item .icon {
+        font-size: 1.5em;
+        margin-bottom: 4px;
+    }
+    
+    .main-content {
+        padding-bottom: 70px; /* Space for bottom nav */
+    }
+}
+
+@media screen and (min-width: 769px) {
+    .bottom-nav {
+        display: none;
+    }
+}
+
+/* ============== Dark Mode Support ============== */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #1a1a2e;
+        --card-bg: #16213e;
+        --text-color: #e5e5e5;
+        --text-secondary: #a0a0a0;
+        --border-color: #334455;
+    }
+    
+    body {
+        background: var(--bg-color);
+        color: var(--text-color);
+    }
+    
+    .sidebar {
+        background: var(--card-bg);
+        border-color: var(--border-color);
+    }
+    
+    .stat-card,
+    .card,
+    .modal-content {
+        background: var(--card-bg);
+        border-color: var(--border-color);
+    }
+    
+    .data-table th {
+        background: #1e3a5f;
+    }
+    
+    .data-table tr:nth-child(even) {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    input, select, textarea {
+        background: #1e3a5f;
+        border-color: var(--border-color);
+        color: var(--text-color);
+    }
+}
+
+/* ============== Print Styles ============== */
+
+@media print {
+    .sidebar,
+    .mobile-menu-btn,
+    .bottom-nav,
+    .pwa-install-banner,
+    .modal,
+    .btn {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .competitor-row {
+        break-inside: avoid;
+    }
+    
+    .stat-card {
+        border: 1px solid #ccc;
+    }
+}
+
+/* ============== Landscape Mode ============== */
+
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .sidebar {
+        width: 60px;
+    }
+    
+    .sidebar .logo-text,
+    .sidebar .nav-label {
+        display: none;
+    }
+    
+    .modal-content {
+        max-height: 95vh;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ============== P2-6: Enhanced Mobile Responsiveness ============== */
+
+/* Mobile freshness and confidence badges */
+@media screen and (max-width: 768px) {
+    .freshness-badge,
+    .confidence-badge {
+        font-size: 9px;
+        padding: 2px 6px;
+    }
+
+    .competitor-card {
+        padding: 16px;
+    }
+
+    .competitor-card .competitor-header > div {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .competitor-card .competitor-header > div > div:first-child {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    /* Battlecard mobile adjustments */
+    .battlecard-full {
+        padding: 16px !important;
+    }
+
+    .battlecard-full > div[style*="grid-template-columns: repeat(2"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    .battlecard-full h2 {
+        font-size: 20px !important;
+    }
+
+    /* Conflict resolution cards mobile */
+    .conflict-card > div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    .conflict-card .btn-sm {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Data quality page mobile */
+    .confidence-stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .source-type-grid,
+    .field-confidence-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .freshness-badge,
+    .confidence-badge {
+        font-size: 8px;
+        padding: 1px 4px;
+    }
+
+    .competitor-card .competitor-details {
+        grid-template-columns: 1fr !important;
+    }
+
+    .competitor-card .competitor-actions {
+        flex-direction: column;
+    }
+
+    .competitor-card .competitor-actions .btn {
+        width: 100%;
+    }
+
+    /* Battlecard header badges stack */
+    .battlecard-full > div:first-child > div:first-child > div[style*="display: flex; gap: 12px"] {
+        flex-wrap: wrap;
+        gap: 6px !important;
+    }
+
+    /* Conflict card buttons stack */
+    .conflict-card > div:last-child {
+        flex-direction: column !important;
+    }
+
+    /* Stats grid single column */
+    .confidence-stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Charts row single column */
+    .charts-row {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ============== Safe Area Insets (iOS) ============== */
+
+@supports (padding: max(0px)) {
+    .main-content {
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+
+    .bottom-nav {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .sidebar {
+        padding-top: max(20px, env(safe-area-inset-top));
+    }
+}

@@ -1,0 +1,16 @@
+# Certify Intel - Prometheus Configuration
+# Scrapes the FastAPI /metrics endpoint for application metrics.
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "certify-intel-backend"
+    # When running Certify Intel on the host machine (not in Docker),
+    # use host.docker.internal to reach the backend from Prometheus container.
+    # If running the backend in Docker too, change to the container name.
+    static_configs:
+      - targets: ["host.docker.internal:8000"]
+    metrics_path: "/metrics"
+    scrape_interval: 10s

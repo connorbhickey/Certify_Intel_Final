@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<!-- CSRF mitigated: JWT auth via Authorization header, not cookies -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certify Intel - Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="browser_tab_icon.jpg">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(30, 41, 59, 0.95);
+            border-radius: 16px;
+            padding: 48px 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-logo img {
+            height: 120px;
+            width: 120px;
+            object-fit: contain;
+            margin-bottom: 16px;
+            border-radius: 16px;
+        }
+
+        .login-logo h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #f8fafc;
+            margin: 0;
+        }
+
+        .login-logo h1 span {
+            color: #3b82f6;
+        }
+
+        .login-logo p {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            margin-top: 4px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: #cbd5e1;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            padding: 14px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.6);
+            color: #f8fafc;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: #64748b;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #3b82f6;
+        }
+
+        .remember-me span {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message.visible {
+            display: flex;
+        }
+
+        .footer-text {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.75rem;
+            margin-top: 24px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input-wrapper input {
+            flex: 1;
+            padding-right: 70px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <img src="app_icon.jpg" alt="Certify Intel">
+                <h1>Certify<span>Intel</span></h1>
+                <p>Competitive Intelligence Dashboard</p>
+            </div>
+
+            <div id="errorMessage" class="error-message">
+                <span>⚠️</span>
+                <span id="errorText">Invalid email or password</span>
+            </div>
+
+            <form id="loginForm" class="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="username" placeholder="your@email.com"
+                        autocomplete="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="password" name="password" placeholder="••••••••"
+                            autocomplete="current-password" required>
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">
+                            <span id="toggleIcon">Show</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Keep me signed in</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    Sign In
+                </button>
+
+                <p class="auth-switch" style="text-align:center;margin-top:20px;color:#94a3b8;font-size:0.875rem;">
+                    Don't have an account?
+                    <a href="#" onclick="toggleAuthMode('register')" style="color:#3b82f6;text-decoration:none;font-weight:500;">Create one</a>
+                </p>
+            </form>
+
+            <!-- Registration Form (hidden by default) -->
+            <form id="registerForm" class="login-form" onsubmit="handleRegister(event)" style="display:none;">
+                <div class="form-group">
+                    <label for="regFullName">Full Name</label>
+                    <input type="text" id="regFullName" placeholder="John Doe" autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="regEmail">Email Address</label>
+                    <input type="email" id="regEmail" placeholder="you@company.com" autocomplete="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" placeholder="Minimum 8 characters" autocomplete="new-password" required minlength="8">
+                </div>
+
+                <div class="form-group">
+                    <label for="regPasswordConfirm">Confirm Password</label>
+                    <input type="password" id="regPasswordConfirm" placeholder="Re-enter password" autocomplete="new-password" required>
+                </div>
+
+                <button type="submit" class="login-btn" id="registerBtn">
+                    Create Account
+                </button>
+
+                <p class="auth-switch" style="text-align:center;margin-top:20px;color:#94a3b8;font-size:0.875rem;">
+                    Already have an account?
+                    <a href="#" onclick="toggleAuthMode('login')" style="color:#3b82f6;text-decoration:none;font-weight:500;">Sign in</a>
+                </p>
+            </form>
+
+            <p class="footer-text">© 2026 Certify Health. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = 'Show';
+            }
+        }
+
+        function toggleAuthMode(mode) {
+            document.getElementById('loginForm').style.display = mode === 'login' ? 'flex' : 'none';
+            document.getElementById('registerForm').style.display = mode === 'register' ? 'flex' : 'none';
+            document.getElementById('errorMessage').classList.remove('visible');
+            // Reset error styling
+            const el = document.getElementById('errorMessage');
+            el.style.background = 'rgba(239, 68, 68, 0.15)';
+            el.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+            document.getElementById('errorText').style.color = '#fca5a5';
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('errorMessage');
+            const textEl = document.getElementById('errorText');
+            textEl.textContent = msg;
+            el.style.background = 'rgba(239, 68, 68, 0.15)';
+            el.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+            textEl.style.color = '#fca5a5';
+            el.classList.add('visible');
+        }
+
+        function showSuccess(msg) {
+            const el = document.getElementById('errorMessage');
+            const textEl = document.getElementById('errorText');
+            textEl.textContent = msg;
+            el.style.background = 'rgba(34, 197, 94, 0.15)';
+            el.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+            textEl.style.color = '#86efac';
+            el.classList.add('visible');
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            const btn = document.getElementById('registerBtn');
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regPasswordConfirm').value;
+            const fullName = document.getElementById('regFullName').value;
+
+            // Client-side validation
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+
+            if (password.length < 8) {
+                showError('Password must be at least 8 characters');
+                return;
+            }
+
+            // Show loading state
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Creating account...';
+            document.getElementById('errorMessage').classList.remove('visible');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        full_name: fullName
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || 'Registration failed');
+                }
+
+                // Success - switch to login form
+                toggleAuthMode('login');
+                document.getElementById('email').value = email;
+                showSuccess('Account created successfully! Please sign in.');
+
+            } catch (error) {
+                showError(error.message || 'Registration failed. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Create Account';
+            }
+        }
+
+        // DAP-002: Remember Me functionality
+        const REMEMBER_ME_KEY = 'certify_remember_me';
+        const SAVED_EMAIL_KEY = 'certify_saved_email';
+
+        function loadSavedCredentials() {
+            const rememberMe = localStorage.getItem(REMEMBER_ME_KEY) === 'true';
+            const savedEmail = localStorage.getItem(SAVED_EMAIL_KEY);
+
+            if (rememberMe && savedEmail) {
+                document.getElementById('email').value = savedEmail;
+                document.getElementById('rememberMe').checked = true;
+            }
+        }
+
+        function saveRememberMePreference(email, remember) {
+            if (remember) {
+                localStorage.setItem(REMEMBER_ME_KEY, 'true');
+                localStorage.setItem(SAVED_EMAIL_KEY, email);
+            } else {
+                localStorage.removeItem(REMEMBER_ME_KEY);
+                localStorage.removeItem(SAVED_EMAIL_KEY);
+            }
+        }
+
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            // DAP-002: Load saved credentials
+            loadSavedCredentials();
+
+            const token = localStorage.getItem('access_token');
+            if (token) {
+                // Verify token is still valid
+                fetch(`${API_BASE}/api/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            window.location.href = '/';
+                        }
+                    })
+                    .catch(() => {
+                        localStorage.removeItem('access_token');
+                    });
+            }
+        });
+
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="loading-spinner"></span> Signing in...';
+            errorMessage.classList.remove('visible');
+
+            try {
+                // OAuth2 expects form-urlencoded data
+                const formData = new URLSearchParams();
+                formData.append('username', email);
+                formData.append('password', password);
+
+                const response = await fetch(`${API_BASE}/token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || 'Invalid email or password');
+                }
+
+                const data = await response.json();
+
+                // Store tokens
+                localStorage.setItem('access_token', data.access_token);
+                if (data.refresh_token) {
+                    localStorage.setItem('refresh_token', data.refresh_token);
+                }
+                if (data.expires_in) {
+                    const expiresAt = Date.now() + (data.expires_in * 1000);
+                    localStorage.setItem('token_expires_at', expiresAt.toString());
+                }
+
+                // DAP-002: Save Remember Me preference
+                const rememberMe = document.getElementById('rememberMe').checked;
+                saveRememberMePreference(email, rememberMe);
+
+                // Redirect to dashboard
+                window.location.href = '/';
+
+            } catch (error) {
+                errorText.textContent = error.message || 'Login failed. Please try again.';
+                errorMessage.classList.add('visible');
+
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = 'Sign In';
+            }
+        }
+    </script>
+</body>
+
+</html>

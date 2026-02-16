@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Wizard - CompetitorIQ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0D3B66 0%, #122753 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wizard {
+            background: white;
+            border-radius: 16px;
+            padding: 48px;
+            width: 100%;
+            max-width: 500px;
+            color: #1e293b;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: #122753;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #122753;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+
+        p.subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .steps {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .step {
+            flex: 1;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+        }
+
+        .step.active {
+            background: #3A95ED;
+        }
+
+        .step.completed {
+            background: #22c55e;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #3A95ED;
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3A95ED;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-primary:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            margin-top: 12px;
+        }
+
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: #dcfce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 32px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wizard">
+        <div class="logo">
+            <div class="logo-icon">CQ</div>
+            <span class="logo-text">CompetitorIQ</span>
+        </div>
+
+        <!-- Step indicators -->
+        <div class="steps">
+            <div class="step" id="step1-indicator"></div>
+            <div class="step" id="step2-indicator"></div>
+            <div class="step" id="step3-indicator"></div>
+        </div>
+
+        <!-- Step 1: Company Info -->
+        <div id="step1">
+            <h2>Welcome! Let's get started</h2>
+            <p class="subtitle">Set up your competitive intelligence dashboard</p>
+
+            <div class="form-group">
+                <label>Company Name</label>
+                <input type="text" id="companyName" placeholder="Your Company Name">
+            </div>
+            <div class="form-group">
+                <label>Industry</label>
+                <select id="industry">
+                    <option value="">Select your industry</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="fintech">Fintech</option>
+                    <option value="saas">SaaS / Technology</option>
+                    <option value="retail">Retail / E-commerce</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="nextStep(1)">Continue</button>
+        </div>
+
+        <!-- Step 2: API Keys -->
+        <div id="step2" class="hidden">
+            <h2>Connect Your APIs</h2>
+            <p class="subtitle">Optional: Enable AI features and news monitoring</p>
+
+            <div class="form-group">
+                <label>OpenAI API Key</label>
+                <input type="password" id="openaiKey" placeholder="sk-...">
+                <div class="input-hint">Required for AI Executive Summary</div>
+            </div>
+            <div class="form-group">
+                <label>NewsAPI Key</label>
+                <input type="password" id="newsKey" placeholder="Your NewsAPI key">
+                <div class="input-hint">Required for news monitoring</div>
+            </div>
+            <button class="btn btn-primary" onclick="nextStep(2)">Continue</button>
+            <button class="btn btn-secondary" onclick="skipStep(2)">Skip for now</button>
+        </div>
+
+        <!-- Step 3: Complete -->
+        <div id="step3" class="hidden">
+            <div class="success-icon">✓</div>
+            <h2 style="text-align: center;">You're all set!</h2>
+            <p class="subtitle" style="text-align: center;">Your dashboard is ready to use</p>
+            <button class="btn btn-primary" onclick="launchApp()">Launch Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+
+        function updateStepIndicators() {
+            for (let i = 1; i <= 3; i++) {
+                const indicator = document.getElementById(`step${i}-indicator`);
+                indicator.classList.remove('active', 'completed');
+                if (i < currentStep) indicator.classList.add('completed');
+                else if (i === currentStep) indicator.classList.add('active');
+            }
+        }
+
+        function nextStep(from) {
+            document.getElementById(`step${from}`).classList.add('hidden');
+            currentStep = from + 1;
+            document.getElementById(`step${currentStep}`).classList.remove('hidden');
+            updateStepIndicators();
+
+            if (from === 2) {
+                saveConfig();
+            }
+        }
+
+        function skipStep(step) {
+            nextStep(step);
+        }
+
+        function saveConfig() {
+            const config = {
+                companyName: document.getElementById('companyName').value || 'My Company',
+                industry: document.getElementById('industry').value || 'other',
+                openaiKey: document.getElementById('openaiKey').value || '',
+                newsKey: document.getElementById('newsKey').value || ''
+            };
+
+            // Save to local storage for the app to read
+            localStorage.setItem('competitoriq_config', JSON.stringify(config));
+
+            // If we have Electron API, save to file
+            if (window.electronAPI) {
+                window.electronAPI.saveConfig(config);
+            }
+        }
+
+        function launchApp() {
+            // Redirect to main app or close wizard
+            window.location.href = '/app';
+        }
+
+        // Initialize
+        updateStepIndicators();
+    </script>
+</body>
+
+</html>

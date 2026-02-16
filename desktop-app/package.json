@@ -1,0 +1,122 @@
+{
+    "name": "certify-intel",
+    "version": "8.3.1",
+    "description": "Certify Intel - Competitive Intelligence Platform for Healthcare Technology",
+    "main": "electron/main.js",
+    "author": "Certify Health",
+    "license": "UNLICENSED",
+    "private": true,
+    "scripts": {
+        "start": "electron .",
+        "start:dev": "cross-env NODE_ENV=development electron .",
+        "build:backend": "cd ../backend && .venv\\Scripts\\pyinstaller --onefile --name certify_backend main.py",
+        "build:win": "electron-builder --win",
+        "build:mac": "electron-builder --mac",
+        "build:all": "electron-builder --win --mac",
+        "build:version-a": "cross-env BUILD_VERSION=A npm run build:all",
+        "build:version-b": "cross-env BUILD_VERSION=B npm run build:all",
+        "postinstall": "electron-builder install-app-deps",
+        "build": "npm run build:backend && npm run build:win"
+    },
+    "dependencies": {
+        "@sentry/electron": "^4.0.0",
+        "electron-log": "^5.0.3",
+        "electron-updater": "^6.1.7"
+    },
+    "devDependencies": {
+        "cross-env": "^7.0.3",
+        "electron": "^28.3.3",
+        "electron-builder": "^24.9.1"
+    },
+    "build": {
+        "appId": "com.certifyhealth.intel",
+        "productName": "Certify Intel",
+        "directories": {
+            "output": "dist",
+            "buildResources": "resources"
+        },
+        "files": [
+            "electron/**/*",
+            "backend-bundle/**/*",
+            "data/**/*",
+            "!**/*.pyc",
+            "!**/__pycache__"
+        ],
+        "extraResources": [
+            {
+                "from": "backend-bundle",
+                "to": "backend-bundle",
+                "filter": [
+                    "**/*",
+                    ".*"
+                ]
+            },
+            {
+                "from": "data",
+                "to": "data"
+            },
+            {
+                "from": "frontend",
+                "to": "frontend"
+            }
+        ],
+        "win": {
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ],
+            "icon": "resources/icons/icon.ico",
+            "artifactName": "Certify_Intel_v${version}_Setup.${ext}"
+        },
+        "mac": {
+            "target": [
+                {
+                    "target": "dmg",
+                    "arch": [
+                        "x64",
+                        "arm64"
+                    ]
+                }
+            ],
+            "icon": "resources/icons/icon.icns",
+            "category": "public.app-category.business",
+            "artifactName": "Certify_Intel_v${version}_${arch}.${ext}"
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "installerIcon": "resources/icons/icon.ico",
+            "uninstallerIcon": "resources/icons/icon.ico",
+            "installerHeaderIcon": "resources/icons/icon.ico",
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true
+        },
+        "dmg": {
+            "contents": [
+                {
+                    "x": 130,
+                    "y": 220
+                },
+                {
+                    "x": 410,
+                    "y": 220,
+                    "type": "link",
+                    "path": "/Applications"
+                }
+            ]
+        },
+        "publish": {
+            "provider": "github",
+            "owner": "[YOUR-GITHUB-ORG]",
+            "repo": "Project_Intel_v6.1.1",
+            "releaseType": "release",
+            "vPrefixedTagName": true
+        },
+        "afterSign": null,
+        "forceCodeSigning": false
+    }
+}

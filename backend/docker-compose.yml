@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  certify-intel-backend:
+    build: .
+    container_name: certify_intel_backend
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./exports:/app/exports
+      # Mount .env if present, otherwise use environment variables below
+      - ./.env:/app/.env
+    environment:
+      - DATABASE_URL=sqlite:///./data/certify_intel.db
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/api/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  # Optional: Simple frontend service if we were serving static files separately
+  # frontend:
+  #   image: nginx:alpine
+  #   volumes:
+  #     - ../frontend:/usr/share/nginx/html
+  #   ports:
+  #     - "80:80"

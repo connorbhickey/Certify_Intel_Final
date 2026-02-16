@@ -1,0 +1,136 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment variables
+.env
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Binaries & Builds
+backend/dist/
+backend/build/
+desktop-app/dist/
+desktop-app/backend-bundle/
+*.exe
+*.dmg
+
+# Exports
+backend/exports/
+
+desktop.ini
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Build outputs
+backend/*.spec
+!backend/certify_backend.spec
+backend/exports/*.pdf
+backend/exports/*.xlsx
+backend/reports/
+backend/test_reports/
+
+# Frontend tests
+frontend/node_modules/
+frontend/coverage/
+
+# Desktop app
+desktop-app/node_modules/
+desktop-app/dist/
+desktop-app/out/
+desktop-app/backend-bundle/
+
+# Test files
+backend/test_*.py
+backend/verify_*.py
+backend/verify_*.pdf
+backend/test_*.json
+backend/build_log*.txt
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Additional security - sensitive files
+.env.*
+.env.local
+.env.production
+.env.development
+*.pem
+*.key
+credentials.json
+secrets.json
+config.local.json
+
+# Claude Code - track shared config, ignore personal overrides
+.claude/settings.local.json
+
+# Windows artifacts
+nul
+
+# Backup database files
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Installer packages (distributed via GitHub Releases)
+Installer Packages for v5.1.2/
+
+# Ad-hoc debug/test scripts (root level)
+check_news_dates.py
+test_endpoints.py
+test_news_api.py

@@ -1,0 +1,99 @@
+# Certify Intel v7.0 - Docker Compose for Development Infrastructure
+# Includes: PostgreSQL + pgvector, Langfuse v2
+
+services:
+  # =============================================================================
+  # PostgreSQL with pgvector extension for vector search
+  # =============================================================================
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: certify-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-certify_intel}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/database_migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =============================================================================
+  # Langfuse v2 - AI Observability Platform (Self-Hosted)
+  # Simpler setup with just PostgreSQL
+  # =============================================================================
+  langfuse-postgres:
+    image: postgres:16-alpine
+    container_name: langfuse-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${LANGFUSE_DB_USER:-langfuse}
+      POSTGRES_PASSWORD: ${LANGFUSE_DB_PASSWORD:-langfuse}
+      POSTGRES_DB: ${LANGFUSE_DB_NAME:-langfuse}
+    ports:
+      - "5433:5432"
+    volumes:
+      - langfuse_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  langfuse:
+    image: langfuse/langfuse:2
+    container_name: langfuse
+    restart: unless-stopped
+    depends_on:
+      langfuse-postgres:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      # Database (PostgreSQL)
+      DATABASE_URL: postgresql://${LANGFUSE_DB_USER:-langfuse}:${LANGFUSE_DB_PASSWORD:-langfuse}@langfuse-postgres:5432/${LANGFUSE_DB_NAME:-langfuse}
+
+      # Security
+      NEXTAUTH_SECRET: ${LANGFUSE_NEXTAUTH_SECRET:-certify-intel-langfuse-secret-key-2026}
+      SALT: ${LANGFUSE_SALT:-certify-intel-langfuse-salt-2026}
+      NEXTAUTH_URL: http://localhost:3000
+
+      # Telemetry (opt-out for privacy)
+      TELEMETRY_ENABLED: "false"
+
+      # Enable self-registration for first user
+      AUTH_DISABLE_SIGNUP: "false"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/public/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  postgres_data:
+    driver: local
+  langfuse_postgres_data:
+    driver: local
+
+# =============================================================================
+# Usage:
+#   Start all services:     docker-compose up -d
+#   View logs:              docker-compose logs -f
+#   Stop services:          docker-compose down
+#   Reset (delete data):    docker-compose down -v
+#
+# Access:
+#   PostgreSQL:  localhost:5432 (user: postgres, pass: postgres, db: certify_intel)
+#   Langfuse:    http://localhost:3000 (create account on first visit)
+#
+# After starting, run migrations:
+#   cd backend
+#   alembic upgrade head
+# =============================================================================

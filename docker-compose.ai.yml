@@ -1,0 +1,33 @@
+# Certify Intel - AI Infrastructure Services
+# Usage: docker-compose -f docker-compose.ai.yml up -d
+version: '3.8'
+
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:main
+    container_name: certify-litellm
+    ports:
+      - "4000:4000"
+    environment:
+      - LITELLM_MASTER_KEY=sk-certify-intel
+    volumes:
+      - ./litellm-config.yaml:/app/config.yaml
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: certify-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    # GPU support (uncomment for NVIDIA GPU):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - capabilities: [gpu]
+
+volumes:
+  ollama_data:

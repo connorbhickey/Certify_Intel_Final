@@ -1,0 +1,60 @@
+version: "3.8"
+
+# =============================================================================
+# Certify Intel - PostgreSQL + pgvector Docker Compose
+# =============================================================================
+# Usage:
+#   docker compose -f docker-compose.postgres.yml up -d
+#   docker compose -f docker-compose.postgres.yml down
+#   docker compose -f docker-compose.postgres.yml down -v  (removes data volume)
+#
+# Connection string:
+#   postgresql://certify_intel:certify_intel_password@localhost:5432/certify_intel
+# =============================================================================
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: certify_intel_postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: certify_intel
+      POSTGRES_USER: certify_intel
+      POSTGRES_PASSWORD: certify_intel_password
+      # Performance tuning for development
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=en_US.UTF-8"
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - certify_intel_pgdata:/var/lib/postgresql/data
+      - ./scripts/postgres_init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U certify_intel -d certify_intel"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+    # PostgreSQL performance tuning (suitable for dev/small prod)
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "work_mem=16MB"
+      - "-c"
+      - "maintenance_work_mem=128MB"
+      - "-c"
+      - "effective_cache_size=512MB"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "log_statement=none"
+
+volumes:
+  certify_intel_pgdata:
+    driver: local

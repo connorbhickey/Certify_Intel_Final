@@ -1,0 +1,105 @@
+# Core - Updated January 2026 (TECH-004) + v7.0 AI-Native Upgrade
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.10.0
+sqlalchemy>=2.0.36
+aiosqlite>=0.20.0
+
+# =============================================================================
+# v7.0 AI-NATIVE PLATFORM DEPENDENCIES (January 31, 2026)
+# =============================================================================
+
+# PostgreSQL + pgvector (Vector Store)
+asyncpg>=0.30.0  # Async PostgreSQL driver
+pgvector>=0.3.5  # pgvector Python bindings
+psycopg[binary]>=3.2.0  # Sync PostgreSQL driver (for Alembic)
+
+# LangGraph (Agent Orchestration)
+langgraph>=0.3.5  # LangGraph state machine
+langgraph-checkpoint>=2.0.0  # Checkpoint persistence
+
+# Langfuse (AI Observability)
+langfuse>=2.57.0  # AI tracing and cost monitoring
+
+# Document Processing (Knowledge Base)
+unstructured[pdf,docx]>=0.16.0  # Production document extraction
+
+# AI Providers (Multi-Model Routing)
+anthropic>=0.39.0  # Claude Opus 4.5 / Sonnet 4.5
+
+# News (RSS fallback for pygooglenews)
+feedparser>=6.0.0  # RSS feed parsing
+
+# Scrapers
+playwright>=1.49.0
+beautifulsoup4>=4.12.3
+requests>=2.32.0
+lxml>=5.3.0
+html5lib>=1.1
+duckduckgo-search>=6.4.0
+# pygooglenews>=0.1.2  # Disabled: feedparser<6.0 uses deprecated use_2to3 (CI breaks)
+# Note: News fallback to raw RSS works fine without pygooglenews
+
+# AI
+openai>=1.58.0
+tiktoken>=0.8.0
+langchain>=0.3.0
+google-genai>=1.0.0  # Google GenAI SDK (unified, replaces deprecated google-generativeai)
+
+# Vertex AI (v5.3.0 - Enterprise AI)
+google-cloud-aiplatform>=1.72.0  # Core Vertex AI SDK
+google-auth>=2.36.0  # GCP authentication
+# google-cloud-discoveryengine>=0.13.0  # RAG Engine (Phase 2)
+# google-cloud-aiplatform[vectorsearch]>=1.72.0  # Vector Search (Phase 3)
+
+# ML Sentiment Analysis (v5.0.5 - Phase 4)
+transformers>=4.47.0  # Hugging Face transformers
+torch>=2.5.0  # PyTorch backend
+accelerate>=1.2.0  # Faster inference
+
+# Multimodal AI (v5.0.5 - Phase 3)
+Pillow>=11.0.0  # Image processing
+PyMuPDF>=1.25.0  # PDF processing (fitz)
+PyPDF2>=3.0.0  # PDF text extraction (knowledge_base.py)
+
+# Utilities
+python-dotenv>=1.0.1
+python-multipart>=0.0.18
+APScheduler>=3.10.4
+tenacity>=9.0.0
+httpx>=0.28.0
+
+# Reporting & Export
+reportlab>=4.2.0
+openpyxl>=3.1.5
+jinja2>=3.1.5
+weasyprint>=63.0
+python-pptx>=0.6.23
+
+# Auth
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+
+# Database Migrations (REL-009)
+alembic>=1.14.0
+
+# Cache
+redis>=5.2.0
+
+# Testing
+pytest>=8.3.0
+pytest-asyncio>=0.24.0
+pytest-cov>=6.0.0  # Coverage reporting
+pytest-timeout>=2.2.0  # Test timeout enforcement
+
+# Finance Data
+yfinance>=0.2.50
+pandas>=2.2.0
+xlsxwriter>=3.2.0
+matplotlib>=3.9.0
+seaborn>=0.13.2
+
+# Security (TECH-004 addition)
+# python-multipart already listed above in Utilities section
+itsdangerous>=2.2.0  # Secure cookies
+slowapi>=0.1.9
