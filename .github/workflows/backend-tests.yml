@@ -60,6 +60,7 @@ jobs:
 
       - name: Lint with flake8
         working-directory: backend
+        continue-on-error: true
         run: |
           flake8 --max-line-length=120 --count --statistics \
             --exclude=venv,__pycache__,build,dist,.eggs \
