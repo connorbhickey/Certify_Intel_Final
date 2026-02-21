@@ -83,23 +83,23 @@ class AuthManager:
             logger.error(f"Error ensuring default admin: {e}")
     
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
-        """Verify a password against hash. Supports both PBKDF2 and legacy SHA256."""
-        if "$" in hashed_password:
-            # New PBKDF2 format: salt_hex$hash_hex
-            try:
-                salt_hex, stored_hash = hashed_password.split("$", 1)
-                salt = bytes.fromhex(salt_hex)
-                computed = hashlib.pbkdf2_hmac(
-                    "sha256", plain_password.encode(), salt, 600_000
-                ).hex()
-                return secrets.compare_digest(computed, stored_hash)
-            except (ValueError, TypeError):
-                return False
-        else:
-            # Legacy SHA256 format (backward compatibility)
-            return secrets.compare_digest(
-                self._hash_password_legacy(plain_password), hashed_password
-            )
+        """Verify a password against hash. Supports PBKDF2 ($ and : separators) and legacy SHA256."""
+        # PBKDF2 format: salt_hex$hash_hex (current) or salt_hex:hash_hex (older builds)
+        for sep in ("$", ":"):
+            if sep in hashed_password:
+                try:
+                    salt_hex, stored_hash = hashed_password.split(sep, 1)
+                    salt = bytes.fromhex(salt_hex)
+                    computed = hashlib.pbkdf2_hmac(
+                        "sha256", plain_password.encode(), salt, 600_000
+                    ).hex()
+                    return secrets.compare_digest(computed, stored_hash)
+                except (ValueError, TypeError):
+                    return False
+        # Legacy SHA256 format (backward compatibility)
+        return secrets.compare_digest(
+            self._hash_password_legacy(plain_password), hashed_password
+        )
 
     def _hash_password_legacy(self, password: str) -> str:
         """Legacy SHA256 hash for backward compatibility only."""
