@@ -23,8 +23,8 @@ TEST_SERVER_PORT = int(os.getenv("TEST_SERVER_PORT", "8000"))
 TEST_BASE_URL = f"http://{TEST_SERVER_HOST}:{TEST_SERVER_PORT}"
 
 # Test credentials
-TEST_ADMIN_EMAIL = os.getenv("TEST_ADMIN_EMAIL", "[YOUR-ADMIN-EMAIL]")
-TEST_ADMIN_PASSWORD = os.getenv("TEST_ADMIN_PASSWORD", "[YOUR-ADMIN-PASSWORD]")
+TEST_ADMIN_EMAIL = os.getenv("TEST_ADMIN_EMAIL", "admin@certifyhealth.com")
+TEST_ADMIN_PASSWORD = os.getenv("TEST_ADMIN_PASSWORD", "CertifyIntel2026!")
 
 
 @pytest.fixture(scope="session")

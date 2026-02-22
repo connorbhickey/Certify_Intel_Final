@@ -49,27 +49,27 @@ class AuthManager:
     def __init__(self):
         pass
     
+    # Default credentials for desktop app / fresh installs
+    DEFAULT_ADMIN_EMAIL = "admin@certifyhealth.com"
+    DEFAULT_ADMIN_PASSWORD = "CertifyIntel2026!"
+
     def ensure_default_admin(self, db: Session):
         """Create default admin user if not exists.
 
         Reads ADMIN_EMAIL and ADMIN_PASSWORD from environment variables.
-        If ADMIN_PASSWORD is not set, skips creation and logs setup instructions.
+        If not set, uses built-in defaults so the desktop app works out of the box.
         """
         try:
-            admin_email = os.getenv("ADMIN_EMAIL", "admin@yourcompany.com")
-            admin_password = os.getenv("ADMIN_PASSWORD")
-            if not admin_password:
-                # Check if ANY user exists already (previous setup)
-                any_user = db.query(User).first()
-                if not any_user:
-                    logger.warning(
-                        "No users found and ADMIN_PASSWORD not set. "
-                        "To create an admin account, set ADMIN_EMAIL and ADMIN_PASSWORD "
-                        "in your .env file (see .env.example) and restart the server."
-                    )
-                return
+            admin_email = os.getenv("ADMIN_EMAIL") or self.DEFAULT_ADMIN_EMAIL
+            admin_password = os.getenv("ADMIN_PASSWORD") or self.DEFAULT_ADMIN_PASSWORD
+
             existing = db.query(User).filter(User.email == admin_email).first()
             if not existing:
+                # Check if ANY user exists (maybe admin email was different)
+                any_user = db.query(User).first()
+                if any_user:
+                    logger.info("Users exist but no match for admin email. Skipping admin creation.")
+                    return
                 logger.info(f"Creating default admin: {admin_email}")
                 self.create_user(
                     db,
@@ -78,7 +78,22 @@ class AuthManager:
                     full_name="System Admin",
                     role="admin"
                 )
-                logger.info("Admin account created successfully. You can now log in.")
+                if not os.getenv("ADMIN_PASSWORD"):
+                    logger.info(
+                        "Admin account created with default credentials. "
+                        f"Email: {admin_email} | Password: {self.DEFAULT_ADMIN_PASSWORD} — "
+                        "Change this after first login in Settings."
+                    )
+                else:
+                    logger.info("Admin account created successfully. You can now log in.")
+            else:
+                # Admin exists — if running with defaults and no .env override,
+                # ensure the password works (handles shipped DB + missing .env)
+                if not os.getenv("ADMIN_PASSWORD"):
+                    if not self.verify_password(self.DEFAULT_ADMIN_PASSWORD, existing.hashed_password):
+                        logger.info("Resetting admin password to default (no ADMIN_PASSWORD in .env).")
+                        existing.hashed_password = self.hash_password(self.DEFAULT_ADMIN_PASSWORD)
+                        db.commit()
         except Exception as e:
             logger.error(f"Error ensuring default admin: {e}")
     
