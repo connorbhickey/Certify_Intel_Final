@@ -28,6 +28,9 @@
         "electron": "^28.3.3",
         "electron-builder": "^24.9.1"
     },
+    "overrides": {
+        "tar": ">=7.5.8"
+    },
     "build": {
         "appId": "com.certifyhealth.intel",
         "productName": "Certify Intel",
