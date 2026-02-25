@@ -13,57 +13,37 @@ jobs:
     timeout-minutes: 5
     permissions:
       contents: write
-      pull-requests: write
-      issues: write
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configure git
+      - name: Merge branch to master via git
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
         run: |
+          echo "=== Merging ${BRANCH_NAME} into master ==="
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Create PR and merge
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH_NAME: ${{ github.ref_name }}
-        run: |
-          echo "=== Creating PR from ${BRANCH_NAME} to master ==="
+          # Fetch latest master
+          git fetch origin master
+          git checkout master
+          git reset --hard origin/master
 
-          # Check for existing open PR
-          EXISTING=$(gh pr list --head "${BRANCH_NAME}" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+          echo "Master is at: $(git log --oneline -1)"
+          echo "Branch ${BRANCH_NAME} is at: $(git log --oneline origin/${BRANCH_NAME} -1)"
 
-          if [ -n "$EXISTING" ]; then
-            echo "Open PR #${EXISTING} already exists, merging it..."
-            PR_NUM=$EXISTING
-          else
-            echo "Creating new PR..."
-            gh pr create \
-              --title "Merge ${BRANCH_NAME} to master" \
-              --body "Auto-merge from ${BRANCH_NAME}" \
-              --base master \
-              --head "${BRANCH_NAME}" 2>&1
+          # Merge the feature branch
+          git merge "origin/${BRANCH_NAME}" --no-edit -m "Merge ${BRANCH_NAME} into master"
 
-            PR_NUM=$(gh pr list --head "${BRANCH_NAME}" --state open --json number --jq '.[0].number')
-            echo "Created PR #${PR_NUM}"
-          fi
+          echo "After merge, master is at: $(git log --oneline -1)"
 
-          # Enable auto-merge (squash)
-          echo "Merging PR #${PR_NUM}..."
-          gh pr merge "${PR_NUM}" --squash --auto --delete-branch 2>/dev/null || \
-          gh pr merge "${PR_NUM}" --squash --admin 2>/dev/null || \
-          gh pr merge "${PR_NUM}" --merge --admin 2>/dev/null || {
-            echo "Could not auto-merge, trying direct merge..."
-            # Fallback: merge directly via git
-            git fetch origin master
-            git checkout master
-            git merge "origin/${BRANCH_NAME}" --no-edit
-            git push origin master
-          }
+          # Push to master
+          git push origin master
 
           echo "=== Merge complete ==="
 
@@ -84,27 +64,26 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
           # Extract version from constants.py
           VERSION=$(grep '__version__' backend/constants.py | grep -oP '"\K[^"]+')
           TAG="v${VERSION}"
 
           echo "Creating release for ${TAG}..."
 
-          # Check if tag already exists
-          if git rev-parse "${TAG}" >/dev/null 2>&1; then
-            echo "Tag ${TAG} already exists, deleting and recreating..."
-            git tag -d "${TAG}" 2>/dev/null || true
-            git push origin ":refs/tags/${TAG}" 2>/dev/null || true
-          fi
+          # Delete existing tag if present
+          git push origin ":refs/tags/${TAG}" 2>/dev/null || true
 
           # Create and push tag
           git tag -a "${TAG}" -m "Certify Intel ${TAG}"
           git push origin "${TAG}"
 
-          # Create release (the release.yml workflow will also fire, but this ensures it)
+          # Create release
           gh release create "${TAG}" \
             --title "Certify Intel ${TAG}" \
             --generate-notes \
-            --latest 2>/dev/null || echo "Release may already exist from release.yml"
+            --latest
 
           echo "=== Release ${TAG} created ==="
