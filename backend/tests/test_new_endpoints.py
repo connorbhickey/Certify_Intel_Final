@@ -24,8 +24,8 @@ pytestmark = pytest.mark.timeout(20)
 # Helper: login and get auth headers
 # ==============================================================================
 
-ADMIN_EMAIL = "[YOUR-ADMIN-EMAIL]"
-ADMIN_PASSWORD = "[YOUR-ADMIN-PASSWORD]"
+ADMIN_EMAIL = "admin@certifyhealth.com"
+ADMIN_PASSWORD = "CertifyIntel2026!"
 
 
 def _login(client):

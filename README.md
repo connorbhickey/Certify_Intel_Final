@@ -1,7 +1,8 @@
-# Certify Intel
+# Certify Intel v9.0.2
 
 **Competitive Intelligence Platform for Healthcare Technology**
 
+![Version](https://img.shields.io/badge/version-v9.0.2-green)
 ![Python](https://img.shields.io/badge/python-3.9+-blue)
 ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Windows-lightgrey)
 ![License](https://img.shields.io/badge/license-Proprietary-red)
@@ -16,7 +17,7 @@ Certify Intel is a competitive intelligence platform that tracks, analyzes, and 
 
 | Data | Count |
 |------|-------|
-| Active competitors | 78 |
+| Active competitors | 74 |
 | Products tracked | 789 |
 | News articles | 920 active |
 | Data sources | 1,170 (731 verified) |
@@ -52,8 +53,6 @@ Edit `backend/.env` and set:
 | Variable | What to Put |
 |----------|-------------|
 | `SECRET_KEY` | Run `python -c "import secrets; print(secrets.token_hex(32))"` |
-| `ADMIN_EMAIL` | Your admin login email |
-| `ADMIN_PASSWORD` | Your admin login password |
 | `ANTHROPIC_API_KEY` | Your Anthropic API key (recommended) |
 
 Then start the server:
@@ -62,7 +61,14 @@ Then start the server:
 python main.py
 ```
 
-Open **http://localhost:8000** and log in with the email and password you configured.
+Open **http://localhost:8000** and log in with the default credentials:
+
+| Field | Value |
+|-------|-------|
+| **Email** | `admin@certifyhealth.com` |
+| **Password** | `CertifyIntel2026!` |
+
+> **Note:** These defaults are built in and work out of the box. To use custom credentials, set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `backend/.env` before first launch.
 
 For the full walkthrough, see [GETTING_STARTED.md](GETTING_STARTED.md).
 
@@ -151,6 +157,8 @@ The AI router automatically selects the best provider per task. At least one key
 | Build | electron-builder + PyInstaller |
 | Platform | Windows installer (.exe) |
 
+> **Download:** The latest Windows installer is available on the [Releases](../../releases/latest) page.
+
 ### Infrastructure
 
 | Component | Technology |
@@ -175,7 +183,7 @@ backend/                → Python FastAPI application
   schemas/              → Pydantic request/response models
   middleware/            → Security and metrics middleware
   services/             → Background task service
-  tests/                → Test suite (663 tests, 36 files)
+  tests/                → Test suite (639+ tests, 36 files)
   certify_intel.db      → Pre-loaded database (5.5 MB)
   .env.example          → Configuration template
 
@@ -208,7 +216,7 @@ GitHub Actions runs automatically on every push and pull request:
 
 | Workflow | What It Does |
 |----------|-------------|
-| **Backend Tests** | Runs 663 pytest tests + flake8 linting |
+| **Backend Tests** | Runs 639+ pytest tests + flake8 linting |
 | **Frontend Tests** | Runs Jest unit tests |
 | **Security Scan** | Bandit SAST scan with report artifact |
 | **Auto PR** | Creates PR from feature branches |

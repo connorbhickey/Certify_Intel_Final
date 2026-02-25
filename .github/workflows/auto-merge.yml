@@ -7,11 +7,11 @@ on:
     types: [completed]
 
 jobs:
-  auto-merge:
+  auto-merge-on-label:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: >
-      github.event.pull_request.labels &&
+      github.event_name == 'pull_request' &&
       contains(toJSON(github.event.pull_request.labels.*.name), 'auto-pr')
     permissions:
       pull-requests: write
@@ -27,3 +27,27 @@ jobs:
             --squash \
             --auto \
             --delete-branch
+
+  auto-merge-on-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'check_suite' && github.event.check_suite.conclusion == 'success'
+    permissions:
+      pull-requests: write
+      contents: write
+
+    steps:
+      - name: Find and merge auto-pr PRs with passing checks
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find open PRs with the auto-pr label
+          prs=$(gh pr list --repo ${{ github.repository }} --label "auto-pr" --state open --json number -q '.[].number')
+          for pr in $prs; do
+            echo "Attempting to auto-merge PR #$pr"
+            gh pr merge "$pr" \
+              --repo ${{ github.repository }} \
+              --squash \
+              --auto \
+              --delete-branch || echo "PR #$pr not ready to merge yet"
+          done

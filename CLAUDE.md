@@ -1,4 +1,4 @@
-# Certify Intel v9.0.0 - Project Instructions
+# Certify Intel v9.0.2 - Project Instructions
 
 > **CRITICAL**: Ensure you are in the correct local project folder and GitHub repo.
 > **Local Folder Path** = `[PROJECT_ROOT]/`
@@ -217,9 +217,9 @@ Remove-Item -Recurse -Force "$env:APPDATA\Certify Intel" -ErrorAction SilentlyCo
 
 **Certify Intel** is a production-ready Competitive Intelligence Platform designed to track, analyze, and counter 74 active competitors in the healthcare technology space.
 
-**Version**: v9.0.0 (current)
+**Version**: v9.0.2 (current)
 **Status**: Web Version Production-Ready | CI/CD Pipeline Active
-**Last Updated**: February 15, 2026
+**Last Updated**: February 25, 2026
 
 ### Quick Start
 ```bash
@@ -228,17 +228,17 @@ python main.py
 ```
 Then open: http://localhost:8000
 
-**Default Login:** `[YOUR-ADMIN-EMAIL]` / `[YOUR-ADMIN-PASSWORD]`
+**Default Login:** `admin@certifyhealth.com` / `CertifyIntel2026!`
 
 ---
 
-## Current State (v9.0.0 - February 15, 2026)
+## Current State (v9.0.2 - February 25, 2026)
 
 ### Release Status
 | Component | Version | Status |
 |-----------|---------|--------|
-| **Web Version** | v9.0.0 | Production-ready |
-| **Desktop App (Windows)** | v9.0.0 | Pending build |
+| **Web Version** | v9.0.2 | Production-ready |
+| **Desktop App (Windows)** | v9.0.2 | Released |
 | **Desktop App (macOS)** | N/A | Requires macOS machine to build |
 | **CI/CD Pipeline** | - | All checks passing |
 
@@ -251,7 +251,7 @@ Then open: http://localhost:8000
 | **Data Sources** | 512 (86% verified) |
 
 ### Test Suite
-- **Backend: 616 passed, 12 skipped** across 29 test files (including E2E workflow suite)
+- **Backend: 639 passed, 24 skipped** across 29 test files (including E2E workflow suite)
 - **Frontend: 55 passed** (Jest unit tests for utils, API, formatters)
 - Run backend: `python -m pytest -x --tb=short --ignore=tests/test_all_endpoints.py --ignore=tests/test_e2e.py --ignore=tests/e2e/ --ignore=tests/test_e2e_workflows.py` from `backend/`
 - Run frontend: `npm test` from `frontend/`
@@ -759,6 +759,9 @@ AI_FALLBACK_ENABLED=true
 64. **conftest.py must set SECRET_KEY before main.py imports** - Test fixtures that create `TestClient(app)` trigger main.py lifespan which checks `SECRET_KEY`. Set `os.environ.setdefault('SECRET_KEY', ...)` early in conftest.py.
 65. **Security headers middleware must check SECURITY_HEADERS_ENABLED** - Middleware is always registered but checks env var per-request to allow runtime toggle.
 66. **Refresh token rotation: invalidate old on use** - `POST /api/auth/refresh` revokes the used refresh token and issues a new pair (access + refresh). Frontend must store the new refresh token.
+67. **Default admin credentials must be hardcoded, not just in .env** - Desktop app users don't have access to `.env`. `ensure_default_admin()` uses hardcoded `DEFAULT_ADMIN_EMAIL=admin@certifyhealth.com` and `DEFAULT_ADMIN_PASSWORD=CertifyIntel2026!` as fallbacks when env vars are unset. Password hashing must use PBKDF2 with `$` separator format.
+68. **CI release.yml must mirror backend-tests.yml env vars** - Missing `AI_PROVIDER` in release workflow caused test failures on tag push. Always copy the full env block from `backend-tests.yml`.
+69. **auto-merge.yml needs separate jobs per event type** - `pull_request.labels` is null on `check_suite` events. Split into `auto-merge-on-label` and `auto-merge-on-checks` jobs with separate conditions.
 
 ---
 
@@ -801,6 +804,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES=15     # JWT access token lifetime (was 24h)
 
 | Version | Date | Key Changes |
 |---------|------|-------------|
+| **v9.0.2** | Feb 25 | Login credential fix + release rebuild. **Fixed:** Default admin credentials now hardcoded (`admin@certifyhealth.com` / `CertifyIntel2026!`) with PBKDF2-HMAC-SHA256 hashing — no `.env` configuration needed for first login. Password hash format mismatch resolved (supports `$` separator, legacy `:` separator, and legacy SHA256). **CI/CD fixes:** Added missing `AI_PROVIDER: hybrid` env var to `release.yml` backend-tests; fixed `auto-merge.yml` to handle both `pull_request` labeled and `check_suite` completed events separately. **Updated:** README with default credentials and desktop app download link; version bumped in all 6 files; frontend synced to desktop-app. 639 backend tests passing. |
 | **v9.0.0** | Feb 15 | Major architecture overhaul. **Backend:** Extracted 17 routers from main.py (18,749 → 16,617 lines), shared dependencies module, Pydantic schemas, Redis caching with InMemoryCache fallback, Prometheus metrics, GZip compression, security headers middleware (CSP/HSTS/X-Frame-Options), JWT refresh tokens (15-min access + 7-day refresh), TOTP MFA with backup codes, AI cost analytics endpoints, audit log API, competitor relationships. **Frontend:** ES6 module system (6 core + 5 component modules), Jest test suite (55 tests), WCAG 2.1 AA accessibility (skip-to-content, ARIA, keyboard nav), command palette (Ctrl+K), PDF/Excel export engine, notification center, bulk actions framework. Page enhancements: dashboard date range picker, competitor sort/filter/CSV import, battlecard PDF export/history, news sentiment trends, analytics win/loss UI, settings MFA/password/audit. **Infrastructure:** Docker production stack (nginx + Redis), Prometheus + Grafana monitoring, Bandit SAST CI, frontend test CI, automated backup script. 616 backend tests + 55 frontend tests passing. |
 | **v8.3.1** | Feb 14 | Deep link bug fixes + enterprise-grade free OSS upgrades. Bug fixes: url_quality field mapping mismatch (frontend expected exact_page/page_level/homepage_only, backend sent verified/pending/broken), Phase 1 pipeline prematurely marking "verified" before content matching, empty source quality dashboard, re-run button hidden. New providers: LiteLLM unified AI gateway (100+ LLM providers, cost tracking), Ollama local LLM ($0 cost, Llama 3.1/Mistral/Qwen), sentence-transformers free embeddings (all-MiniLM-L6-v2, 384-dim), Opik AI evaluation (hallucination/groundedness scoring). Infrastructure: /health and /readiness endpoints (Kubernetes-ready), slowapi rate limiting, structured JSON logging with correlation IDs, docker-compose.ai.yml for LiteLLM+Ollama. Frontend: ::target-text CSS styling, AI provider status panel in Settings, Firefox 131+ Text Fragment support. All new features default OFF (zero overhead). 543 tests passing (68 new). |
 | **v8.3.0** | Feb 14 | Source quality & enterprise provider integration + content-aware deep link highlighting. |
@@ -843,5 +847,5 @@ ACCESS_TOKEN_EXPIRE_MINUTES=15     # JWT access token lifetime (was 24h)
 
 ---
 
-**Last Updated**: February 15, 2026 (Session 94 - v9.0.0 architecture overhaul: backend router extraction, frontend ES6 modules, security hardening, feature enhancements, Docker/CI infrastructure)
-**Current Version**: v9.0.0
+**Last Updated**: February 25, 2026 (Session 95 - v9.0.2 login credential fix, CI/CD workflow fixes, release rebuild with hardcoded default admin credentials)
+**Current Version**: v9.0.2
