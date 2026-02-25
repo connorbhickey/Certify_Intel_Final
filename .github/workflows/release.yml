@@ -35,6 +35,7 @@ jobs:
       SECRET_KEY: ci-test-secret-key-not-real
       ADMIN_EMAIL: ci@test.com
       ADMIN_PASSWORD: ci-test-password
+      AI_PROVIDER: hybrid
       AI_FALLBACK_ENABLED: "false"
       LANGFUSE_ENABLED: "false"
       VERTEX_AI_ENABLED: "false"
