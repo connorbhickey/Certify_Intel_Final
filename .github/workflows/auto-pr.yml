@@ -15,6 +15,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Create Pull Request
         env:
@@ -27,21 +29,21 @@ jobs:
             # Extract commit messages for PR body
             COMMITS=$(git log origin/master..HEAD --pretty=format:"- %s" 2>/dev/null || echo "- Initial commit")
 
+            # Create label if it doesn't exist (ignore errors if it already exists)
+            gh label create "auto-pr" --description "Auto-created PR from CI" --color "0E8A16" 2>/dev/null || true
+
             gh pr create \
               --title "${{ github.ref_name }}" \
-              --body "$(cat <<EOF
-          ## Auto-generated PR
+              --body "## Auto-generated PR
 
-          ### Commits
-          ${COMMITS}
+### Commits
+${COMMITS}
 
-          ---
-          *Auto-created by CI on push to \`${{ github.ref_name }}\`*
-          EOF
-          )" \
+---
+*Auto-created by CI on push to \`${{ github.ref_name }}\`*" \
               --label "auto-pr" \
               --base master \
-              --head "${{ github.ref_name }}" || echo "PR creation skipped (may already exist)"
+              --head "${{ github.ref_name }}"
           else
             echo "PR #${EXISTING_PR} already exists for branch ${{ github.ref_name }}"
           fi
