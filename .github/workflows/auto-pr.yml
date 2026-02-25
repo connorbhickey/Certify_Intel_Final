@@ -47,3 +47,4 @@ ${COMMITS}
           else
             echo "PR #${EXISTING_PR} already exists for branch ${{ github.ref_name }}"
           fi
+
