@@ -12,6 +12,7 @@ jobs:
     permissions:
       pull-requests: write
       contents: read
+      issues: write
 
     steps:
       - uses: actions/checkout@v4
@@ -22,29 +23,41 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -e
+
           # Check if an OPEN PR already exists for this branch
           EXISTING_PR=$(gh pr list --head "${{ github.ref_name }}" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
 
-          if [ -z "$EXISTING_PR" ]; then
-            # Extract commit messages for PR body
-            COMMITS=$(git log origin/master..HEAD --pretty=format:"- %s" 2>/dev/null || echo "- Initial commit")
+          if [ -n "$EXISTING_PR" ]; then
+            echo "PR #${EXISTING_PR} already exists for branch ${{ github.ref_name }}"
+            exit 0
+          fi
 
-            # Create label if it doesn't exist (ignore errors if it already exists)
-            gh label create "auto-pr" --description "Auto-created PR from CI" --color "0E8A16" 2>/dev/null || true
+          # Extract commit messages for PR body
+          COMMITS=$(git log origin/master..HEAD --pretty=format:"- %s" 2>/dev/null || echo "- Initial commit")
 
-            gh pr create \
-              --title "${{ github.ref_name }}" \
-              --body "## Auto-generated PR
+          echo "Creating PR for branch ${{ github.ref_name }}..."
+          echo "Commits to include:"
+          echo "$COMMITS"
+
+          # Create PR without label first (label may not exist)
+          gh pr create \
+            --title "${{ github.ref_name }}" \
+            --body "## Auto-generated PR
 
 ### Commits
 ${COMMITS}
 
 ---
 *Auto-created by CI on push to \`${{ github.ref_name }}\`*" \
-              --label "auto-pr" \
-              --base master \
-              --head "${{ github.ref_name }}"
-          else
-            echo "PR #${EXISTING_PR} already exists for branch ${{ github.ref_name }}"
-          fi
+            --base master \
+            --head "${{ github.ref_name }}"
 
+          echo "PR created successfully!"
+
+          # Try to add label (non-fatal if label doesn't exist)
+          PR_NUM=$(gh pr list --head "${{ github.ref_name }}" --state open --json number --jq '.[0].number')
+          if [ -n "$PR_NUM" ]; then
+            gh label create "auto-pr" --description "Auto-created PR" --color "0E8A16" 2>/dev/null || true
+            gh pr edit "$PR_NUM" --add-label "auto-pr" 2>/dev/null || true
+          fi
