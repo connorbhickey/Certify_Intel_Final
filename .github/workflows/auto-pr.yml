@@ -20,8 +20,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Check if a PR already exists for this branch
-          EXISTING_PR=$(gh pr list --head "${{ github.ref_name }}" --json number --jq '.[0].number' 2>/dev/null || echo "")
+          # Check if an OPEN PR already exists for this branch
+          EXISTING_PR=$(gh pr list --head "${{ github.ref_name }}" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
 
           if [ -z "$EXISTING_PR" ]; then
             # Extract commit messages for PR body
