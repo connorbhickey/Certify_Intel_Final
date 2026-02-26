@@ -430,6 +430,9 @@
             if (rememberMe && savedEmail) {
                 document.getElementById('email').value = savedEmail;
                 document.getElementById('rememberMe').checked = true;
+            } else if (!savedEmail) {
+                // Pre-populate default admin email for fresh installs
+                document.getElementById('email').value = 'admin@certifyhealth.com';
             }
         }
 

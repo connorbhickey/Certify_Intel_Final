@@ -87,13 +87,13 @@ class AuthManager:
                 else:
                     logger.info("Admin account created successfully. You can now log in.")
             else:
-                # Admin exists — if running with defaults and no .env override,
-                # ensure the password works (handles shipped DB + missing .env)
-                if not os.getenv("ADMIN_PASSWORD"):
-                    if not self.verify_password(self.DEFAULT_ADMIN_PASSWORD, existing.hashed_password):
-                        logger.info("Resetting admin password to default (no ADMIN_PASSWORD in .env).")
-                        existing.hashed_password = self.hash_password(self.DEFAULT_ADMIN_PASSWORD)
-                        db.commit()
+                # Admin exists — ensure the password matches what's configured.
+                # This handles shipped databases where the admin was created
+                # with a different password during development.
+                if not self.verify_password(admin_password, existing.hashed_password):
+                    logger.info("Admin password mismatch — resetting to configured password.")
+                    existing.hashed_password = self.hash_password(admin_password)
+                    db.commit()
         except Exception as e:
             logger.error(f"Error ensuring default admin: {e}")
     

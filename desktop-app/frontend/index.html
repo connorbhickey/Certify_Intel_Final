@@ -9,7 +9,7 @@
     <!-- Force service worker cache purge on version mismatch (inline so SW can't intercept) -->
     <script>
     (function() {
-        var EXPECTED = 'v8.2.1';
+        var EXPECTED = 'v9.0.3';
         var stored = localStorage.getItem('sw_cache_version');
         if (stored && stored !== EXPECTED && 'serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -156,7 +156,7 @@
                 <img src="certify_intel_logo.png" alt="Certify Intel" class="logo-img"
                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <h1 class="logo-fallback-hidden">Certify<span>Intel</span></h1>
-                <span class="app-version">v9.0.2</span>
+                <span class="app-version">v9.0.3</span>
             </div>
             <nav class="nav-menu" aria-label="Page navigation">
                 <a href="#" class="nav-item active" data-page="dashboard" aria-current="page">
