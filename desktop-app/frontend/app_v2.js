@@ -8530,7 +8530,7 @@ async function installPWA() {
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
         try {
-            const EXPECTED_CACHE = 'v8.2.1';
+            const EXPECTED_CACHE = 'v10.0.0';
             const lastCacheVersion = localStorage.getItem('sw_cache_version');
 
             // Force purge if cache version changed

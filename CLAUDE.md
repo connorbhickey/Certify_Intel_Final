@@ -1,7 +1,7 @@
-# Certify Intel v9.0.3 - Project Instructions
+# Certify Intel v10.0.0 - Project Instructions
 
 ## Current Focus
-**v9.0.3** - Fix desktop app login for Kevon (CEO of Certify Health). Login screen must pre-populate `admin@certifyhealth.com` (not developer's personal email). Default credentials: `admin@certifyhealth.com` / `CertifyIntel2026!`
+**v10.0.0** - Desktop app stable release for Kevon (CEO of Certify Health). Fixed infinite reload loop caused by cache version mismatch between index.html and app_v2.js. Login screen pre-populates `admin@certifyhealth.com`.
 
 ---
 
@@ -227,24 +227,14 @@ AI_FALLBACK_ENABLED=true
 
 | Version | Date | Key Changes |
 |---------|------|-------------|
-| **v9.0.3** | Feb 25 | Fix desktop app login screen (admin email pre-population for Kevon). CLAUDE.md cleanup. |
+| **v10.0.0** | Feb 25 | Fixed infinite reload loop (cache version mismatch between index.html and app_v2.js). Desktop app stable release with login pre-population. |
+| **v9.0.3** | Feb 25 | Login email pre-population, CLAUDE.md cleanup, admin password reset logic. |
 | **v9.0.2** | Feb 25 | Login credential fix. Hardcoded default admin. PBKDF2 hash format fix. CI/CD fixes. |
-| **v9.0.0** | Feb 15 | Major architecture: 17 routers extracted, JWT refresh tokens, MFA, ES6 modules, Jest tests, WCAG 2.1 AA, Docker prod stack. |
+| **v9.0.0** | Feb 15 | Major architecture: 17 routers, JWT refresh tokens, MFA, ES6 modules, Docker prod stack. |
 
-> Full history: v7.x-v8.x (Feb 6-14) covered LangGraph agents, Discovery Scout, news filtering, Langfuse, XSS fixes, Chart.js fixes. v2-v6 (Jan 2026) initial builds.
-
----
-
-## Remaining Items
-
-| Item | Priority |
-|------|----------|
-| macOS desktop app build | Low (needs macOS) |
-| Continue main.py router extraction (~16,617 lines) | Medium |
-| Alembic migration system | Medium |
-| Frontend app_v2.js page splitting (24,239 lines) | Medium |
+> Full history: v7.x-v8.x (Feb 6-14) covered LangGraph agents, Discovery Scout, news filtering, Langfuse, XSS fixes. v2-v6 (Jan 2026) initial builds.
 
 ---
 
 **Last Updated**: February 25, 2026
-**Current Version**: v9.0.3
+**Current Version**: v10.0.0

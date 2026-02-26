@@ -5,7 +5,7 @@ Centralizes version string, hallucination instruction, and other constants
 used across multiple modules.
 """
 
-__version__ = "9.0.3"
+__version__ = "10.0.0"
 
 # =============================================================================
 # NO-HALLUCINATION SYSTEM INSTRUCTION (v7.2.0)

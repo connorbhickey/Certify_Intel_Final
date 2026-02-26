@@ -1,8 +1,8 @@
-# Certify Intel v9.0.3
+# Certify Intel v10.0.0
 
 **Competitive Intelligence Platform for Healthcare Technology**
 
-![Version](https://img.shields.io/badge/version-v9.0.3-green)
+![Version](https://img.shields.io/badge/version-v10.0.0-green)
 ![Python](https://img.shields.io/badge/python-3.9+-blue)
 ![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Windows-lightgrey)
 ![License](https://img.shields.io/badge/license-Proprietary-red)
