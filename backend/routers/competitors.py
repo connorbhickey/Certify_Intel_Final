@@ -258,7 +258,11 @@ async def update_competitor(
     changes_made = []
     user_email = current_user.get("email", "unknown")
 
-    for key, value in competitor.model_dump().items():
+    # Only update fields that were explicitly provided (exclude_unset)
+    # to prevent wiping out existing data when the edit form sends a
+    # partial payload.
+    provided_fields = competitor.model_dump(exclude_unset=True)
+    for key, value in provided_fields.items():
         old_value = getattr(db_competitor, key, None)
         if str(old_value) != str(value) and value is not None:
             changes_made.append({

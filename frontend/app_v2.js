@@ -5079,7 +5079,14 @@ function editCompetitor(id) {
             </div>
             <div class="form-group">
                 <label>Website</label>
-                <input type="url" name="website" value="${comp.website}" required>
+                <input type="url" name="website" value="${escapeHtml(comp.website || '')}" required>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status">
+                    <option value="Active" ${comp.status === 'Active' ? 'selected' : ''}>Active</option>
+                    <option value="Inactive" ${comp.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>Threat Level</label>
@@ -5091,15 +5098,15 @@ function editCompetitor(id) {
             </div>
             <div class="form-group">
                 <label>Pricing Model</label>
-                <input type="text" name="pricing_model" value="${comp.pricing_model || ''}">
+                <input type="text" name="pricing_model" value="${escapeHtml(comp.pricing_model || '')}">
             </div>
             <div class="form-group">
                 <label>Base Price</label>
-                <input type="text" name="base_price" value="${comp.base_price || ''}">
+                <input type="text" name="base_price" value="${escapeHtml(comp.base_price || '')}">
             </div>
             <div class="form-group">
                 <label>Notes</label>
-                <textarea name="notes" rows="3">${comp.notes || ''}</textarea>
+                <textarea name="notes" rows="3">${escapeHtml(comp.notes || '')}</textarea>
             </div>
             <button type="submit" class="btn btn-primary">Save Changes</button>
         </form>
@@ -17574,20 +17581,20 @@ function toggleCompetitorMenu(event, compId) {
     showModal(`
         <h3>Competitor Actions</h3>
         <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-            <button class="btn btn-secondary" onclick="viewDataSources(${compId}); closeModal();">
+            <button class="btn btn-secondary" onclick="closeModal(); viewDataSources(${compId});">
                 📊 View Data Sources
             </button>
-            <button class="btn btn-secondary" onclick="triggerScrape(${compId}); closeModal();">
+            <button class="btn btn-secondary" onclick="closeModal(); triggerScrape(${compId});">
                 🔄 Refresh Data
             </button>
-            <button class="btn btn-secondary" onclick="editCompetitor(${compId}); closeModal();">
+            <button class="btn btn-secondary" onclick="closeModal(); setTimeout(function(){ editCompetitor(${compId}); }, 50);">
                 ✏️ Edit Profile
             </button>
-            <button class="btn btn-secondary" onclick="navigateTo('comparison'); closeModal();">
+            <button class="btn btn-secondary" onclick="closeModal(); navigateTo('comparison');">
                 ⚖️ Compare
             </button>
             <hr style="margin: 8px 0; border: none; border-top: 1px solid var(--border-color);">
-            <button class="btn" style="background: #dc3545; color: white;" onclick="deleteCompetitor(${compId}); closeModal();">
+            <button class="btn" style="background: #dc3545; color: white;" onclick="closeModal(); deleteCompetitor(${compId});">
                 🗑️ Delete
             </button>
         </div>
